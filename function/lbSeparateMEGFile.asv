@@ -1,0 +1,26 @@
+function lbSeparateMEGFile(filename,nPage,PageSize,line_len,tmp)
+
+%%% Open the raw MEG data
+machineformat = 'ieee-le';
+rawfid = fopen(filename,'rb',machineformat);
+
+[tname,nam,ext] = fileparts(filename);
+
+%%% separate MEG data
+for i=1:nPage
+    %%% read the Page's data 
+    Position = (i-1) * PageSize * line_len;
+    fseek(rawfid,Position,'bof');
+    str1 = fread(rawfid,[1PageSize * line_len],'char');
+
+    tic
+    fid = fopen([tmp 't_' num2str(i) '_' nam ext],'wt',machineformat);
+    fwrite(fid, str1, 'char');
+    fclose(fid);
+    toc
+end
+
+%%% Close the raw MEG data
+fclose(rawfid);
+
+return;

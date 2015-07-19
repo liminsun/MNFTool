@@ -1,0 +1,26 @@
+function ReadMEG1()
+
+
+filename = 'F:\MEGData\03_254_50_ON.data';
+nPage=5;
+
+PageSize=10000;
+tmp = 'F:\MEGData\tmp03_254_50_ON\';
+
+[tname,nam,ext] = fileparts(filename);
+for i=1:5
+%     MEG_fname(i,:) = [tmp 't_' num2str(i) '_' nam ext];
+    MEG_fname{i} = [tmp 't_' num2str(i) '_' nam ext];
+end
+
+
+
+
+return
+% SepFile(filename, MEG_fname);
+tic
+SepFile(filename, MEG_fname, PageSize );
+toc
+
+
+return;

@@ -1,0 +1,37 @@
+function ReadMEG()
+
+filepath = 'F:\MEGData\';
+filename = '03_254_50_ON.data';
+% filename = '03_1000_400_ON.data';
+str = [filepath filename]
+% tic 
+% load -ascii F:\MEGData\03_254_50_ON.data;
+% data = load([filepath filename]);
+% toc
+
+machineformat = 'ieee-le';
+fid = fopen([filepath filename],'rt',machineformat);
+position = ftell(fid);
+str = fgets(fid); 
+position1 = ftell(fid);
+str = fgets(fid); 
+v = str2num(str);
+fclose(fid);
+
+
+fid = fopen([filepath filename],'rb',machineformat);
+HeadInfo = fread(fid,[1,2],'char');
+fclose(fid);
+% 
+% 
+% sample = position1;
+% 
+% fseek(fid, 1*sample, 'bof');
+% str = fgets(fid); 
+% v = str2num(str);
+% 
+% 
+% fclose(fid);
+% 
+% v = str2num(str);
+return;

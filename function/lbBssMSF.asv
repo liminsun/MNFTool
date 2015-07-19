@@ -1,0 +1,51 @@
+function [S,IM]=lbBssMSF(X)
+%%blind separate signal -- maximum signal fraction 
+%%the other name: maximun noise fraction (MNF)
+%%the second order
+%%X-- mixed signal S -- source signal IM--separation matrix
+%%X (k x n) : k -- the number of channels ; n -- the number of samples
+%%S (k x n) : k -- the number of components ; n -- the number of samples
+%%IM (k x k)
+%%Author: Limin Sun
+%%Date  : 15.02.07
+
+[r,c] = size(X);
+if r < c
+    dX(:,1:c-1) = X(:,1:c-1)-X(:,2:c);
+    T1 = c;
+else
+    dX(1:r-1,:) = X(1:r-1,:)-X(2:r,:);
+    T1 = r;
+end
+
+%1. take the eigenvector expansion of the covariance of dX
+[dr,dc] = size(dX);
+
+if dr < dc
+    T = dc;
+    dX	= dX - mean(dX')' * ones(1,T);
+    [V,D] = eig((dX*dX')/T)	; 
+    scales		= sqrt(diag(D))	; % scales 
+    W  		= diag(1./scales)  * V'	;	% whitener
+
+%2.whiten the original data WX
+    WX		= W*X;  
+%3.compute the eigenvector expansion of the covariance of WX
+    [U,D2] = eig((WX*WX')/T1)	; 
+%4.define IM
+    IM = U'*W;
+%5.compute the maximum noise fraction basis vectors
+    S = IM*X;
+else
+    T = dr;
+    dX	= dX - ones(T,1) * mean(dX);
+    [V,D] = eig((dX'*dX)/T)	; 
+    scales		= sqrt(diag(D))	; % scales 
+    W  		= diag(1./scales)  * V'	;	% whitener
+    WX		= X*W; 
+    [U,D2] = eig((WX'*WX)/T1)	; 
+    IM = U'*W;
+    S = X*IM;
+end
+
+return;
